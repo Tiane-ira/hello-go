@@ -1,4 +1,4 @@
-package log
+package zlog
 
 import (
 	"io"
@@ -11,7 +11,7 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var logger *zap.Logger
+var Logger *zap.Logger
 
 const (
 	defauleLevel      = zap.DebugLevel
@@ -109,7 +109,7 @@ func WithDisableConsole() Option {
 	}
 }
 
-func InitJsonLogger(opts ...Option) {
+func InitJsonZap(opts ...Option) {
 	opt := &option{
 		level:      defauleLevel,
 		fields:     make(map[string]string),
@@ -177,11 +177,11 @@ func InitJsonLogger(opts ...Option) {
 		)
 	}
 
-	logger = zap.New(core, zap.AddCaller(), zap.ErrorOutput(stderr))
+	Logger = zap.New(core, zap.AddCaller(), zap.ErrorOutput(stderr))
 
 	// 添加额外属性
 	for k, v := range opt.fields {
-		logger = logger.WithOptions(zap.Fields(zapcore.Field{Key: k, Type: zapcore.StringType, String: v}))
+		Logger = Logger.WithOptions(zap.Fields(zapcore.Field{Key: k, Type: zapcore.StringType, String: v}))
 	}
 
 }

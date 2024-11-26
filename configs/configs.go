@@ -2,36 +2,45 @@ package configs
 
 import (
 	"fmt"
-	"hello-go/pkg/env"
+	"hello-go/utils/env"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 )
 
 var config = new(Configs)
-var data []byte
 
 type Configs struct {
+	App struct {
+		Name      string `yaml:"name" json:"name" `
+		Version   string `yaml:"version" json:"version"`
+		Port      int    `yaml:"port" json:"port"`
+		ApiPrefix string `yaml:"api-prefix" json:"apiPrefix" mapstructure:"api-prefix"`
+		LogFile   string `yaml:"log-file" json:"logFile" mapstructure:"log-file"`
+	} `yaml:"app" json:"app"`
 	Mysql struct {
-		Host            string `yaml:"host"`
-		Port            string `yaml:"port"`
-		Db              string `yaml:"db"`
-		Username        string `yaml:"username"`
-		Password        string `yaml:"password"`
-		ConnMaxLifeTine int    `yaml:"connMaxLifeTine"`
-		MaxIdleConn     int    `yaml:"maxIdleConn"`
-		MaxOpenConn     int    `yaml:"maxOpenConn"`
-	} `yaml:"mysql"`
+		Host          string `yaml:"host" json:"host"`
+		Port          string `yaml:"port" json:"port"`
+		Username      string `yaml:"username" json:"username"`
+		Password      string `yaml:"password" json:"password"`
+		Db            string `yaml:"db" json:"db"`
+		Params        string `yaml:"params" json:"params"`
+		TablePrefix   string `yaml:"table-prefix" json:"tablePrefix" mapstructure:"table-prefix"`
+		SingularTable bool   `yaml:"singular-table" json:"singularTable" mapstructure:"singular-table"`
+		MaxIdleConns  int    `yaml:"max-idle-conns" json:"maxIdleConns" mapstructure:"max-idle-conns"`
+		MaxOpenConns  int    `yaml:"max-open-conns" json:"maxOpenConns" mapstructure:"max-open-conns"`
+		LogMode       string `yaml:"log-mode" json:"logMode" mapstructure:"log-mode"`
+	} `yaml:"mysql" json:"mysql"`
 
 	Redis struct {
-		Host        string `yaml:"host"`
-		Port        string `yaml:"port"`
-		Db          string `yaml:"db"`
-		Password    string `yaml:"password"`
-		MaxRetries  int    `yaml:"maxRetries"`
-		MaxIdleConn int    `yaml:"maxIdleConn"`
-		PoolSize    int    `yaml:"poolSize"`
-	} `yaml:"redis"`
+		Host         string `yaml:"host" json:"host"`
+		Port         string `yaml:"port" json:"port"`
+		Db           int    `yaml:"db" json:"db"`
+		Password     string `yaml:"password" json:"password"`
+		MaxRetries   int    `yaml:"max-retries" json:"maxRetries" mapstructure:"max-retries"`
+		MaxIdleConns int    `yaml:"max-idle-conns" json:"maxIdleConns" mapstructure:"max-idle-conns"`
+		PoolSize     int    `yaml:"pool-size" json:"poolSize" mapstructure:"pool-size"`
+	} `yaml:"redis" json:"redis"`
 }
 
 func init() {
