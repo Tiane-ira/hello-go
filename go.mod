@@ -63,7 +63,6 @@ require (
 	github.com/spf13/viper v1.19.0
 	go.etcd.io/etcd/api/v3 v3.5.17 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.17 // indirect
-	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/fx v1.23.0
 	go.uber.org/multierr v1.10.0 // indirect
 	go.uber.org/zap v1.26.0
