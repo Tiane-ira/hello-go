@@ -10,11 +10,8 @@ import (
 	"go.uber.org/zap"
 )
 
-// 全局redis客户端
-var RedisClient *redis.Client
-
 // 初始化redis客户端
-func InitClinet() {
+func NewClinet() *redis.Client {
 	redisConf := configs.Get().Redis
 	client := redis.NewClient(&redis.Options{
 		Addr:         fmt.Sprintf("%s:%s", redisConf.Host, redisConf.Port),
@@ -30,6 +27,6 @@ func InitClinet() {
 		panic(err)
 	} else {
 		zlog.Logger.Info("redis connected", zap.String("pong", pong))
-		RedisClient = client
+		return client
 	}
 }

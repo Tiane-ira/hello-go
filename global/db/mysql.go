@@ -17,9 +17,7 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-var MysqlClient *gorm.DB
-
-func InitMysql() {
+func NewMysqlDb() *gorm.DB {
 	mysqlConf := configs.Get().Mysql
 
 	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?%s", mysqlConf.Username, mysqlConf.Password, mysqlConf.Host, mysqlConf.Port, mysqlConf.Db, mysqlConf.Params)
@@ -37,8 +35,8 @@ func InitMysql() {
 		sqlDB, _ := db.DB()
 		sqlDB.SetMaxIdleConns(mysqlConf.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(mysqlConf.MaxOpenConns)
-		MysqlClient = db
 		zlog.Logger.Info("mysql connected")
+		return db
 	}
 }
 
@@ -71,8 +69,7 @@ func getGormConfig() *gorm.Config {
 	return gormConfig
 }
 
-func RegisterTables() {
-	db := MysqlClient
+func RegisterTables(db *gorm.DB) {
 	err := db.AutoMigrate(
 		obj.CsUser{},
 	)

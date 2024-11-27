@@ -1,40 +1,43 @@
 package core
 
 import (
+	"context"
 	"fmt"
 	"hello-go/configs"
-	"hello-go/router"
 	"hello-go/zlog"
 	"net/http"
+	"os"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
-type server interface {
-	ListenAndServe() error
-}
-
-func AppStart() {
-	engine := router.InitRouters()
-
+func StartServer(lc fx.Lifecycle, mux *http.ServeMux) {
 	addr := fmt.Sprintf(":%d", configs.Get().App.Port)
-	s := initServer(addr, engine)
-
-	zlog.Logger.Info("server run success on ", zap.String("addr", addr))
-	err := s.ListenAndServe()
-	if err != nil {
-		zlog.Logger.Error(err.Error())
-	}
-}
-
-func initServer(addr string, engine *gin.Engine) server {
-	return &http.Server{
+	server := &http.Server{
 		Addr:           addr,
-		Handler:        engine,
+		Handler:        mux,
 		ReadTimeout:    20 * time.Second,
 		WriteTimeout:   20 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
+
+	lc.Append(fx.Hook{
+		OnStart: func(ctx context.Context) error {
+			go func() {
+				err := server.ListenAndServe()
+				if err != nil {
+					zlog.Logger.Error("server start failed", zap.Error(err))
+					os.Exit(1)
+				}
+			}()
+			zlog.Logger.Info("server start success", zap.String("addr", addr))
+			return nil
+		},
+		OnStop: func(ctx context.Context) error {
+			// 优雅关闭
+			return server.Shutdown(ctx)
+		},
+	})
 }
