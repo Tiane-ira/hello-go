@@ -1,9 +1,7 @@
-package obj
-
-import "hello-go/global/model"
+package model
 
 type CsUser struct {
-	model.ObjBase
+	ObjBase
 	Name string `json:"name"`
 	Age  int    `json:"age"`
 }

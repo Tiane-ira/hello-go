@@ -4,10 +4,10 @@ import (
 	"context"
 	"hello-go/api"
 	"hello-go/configs"
-	"hello-go/global/core"
-	"hello-go/global/core/app"
-	"hello-go/global/db"
-	"hello-go/global/redis"
+	"hello-go/core/app"
+	"hello-go/core/db"
+	"hello-go/repository"
+	"hello-go/service"
 	"hello-go/zlog"
 
 	"go.uber.org/fx"
@@ -21,9 +21,11 @@ func main() {
 	)
 
 	app := fx.New(
-		fx.Provide(app.NewGin, redis.NewClinet, db.NewMysqlDb),
+		fx.Provide(app.NewGin, db.NewMysqlDb),
+		fx.Provide(service.NewUserService),
+		fx.Provide(repository.NewUserRepository),
 		fx.Invoke(api.NewUserHandler),
-		fx.Invoke(core.StartServer),
+		fx.Invoke(app.StartServer),
 	)
 
 	if err := app.Start(context.Background()); err != nil {

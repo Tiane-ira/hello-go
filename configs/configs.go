@@ -14,6 +14,7 @@ type Configs struct {
 	App struct {
 		Name      string `yaml:"name" json:"name" `
 		Version   string `yaml:"version" json:"version"`
+		Host      string `yaml:"host" json:"host"`
 		Port      int    `yaml:"port" json:"port"`
 		ApiPrefix string `yaml:"api-prefix" json:"apiPrefix" mapstructure:"api-prefix"`
 		LogFile   string `yaml:"log-file" json:"logFile" mapstructure:"log-file"`

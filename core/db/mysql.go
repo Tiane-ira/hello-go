@@ -3,7 +3,7 @@ package db
 import (
 	"fmt"
 	"hello-go/configs"
-	"hello-go/model/obj"
+	"hello-go/model"
 	"hello-go/zlog"
 	"log"
 	"os"
@@ -26,18 +26,17 @@ func NewMysqlDb() *gorm.DB {
 		DefaultStringSize:         191,   // string 类型字段的默认长度
 		SkipInitializeWithVersion: false, // 根据版本自动配置
 	}
-
-	if db, err := gorm.Open(mysql.New(mysqlConfig), getGormConfig()); err != nil {
+	db, err := gorm.Open(mysql.New(mysqlConfig), getGormConfig())
+	if err != nil {
 		zlog.Logger.Error("mysql connect error", zap.Error(err))
 		panic(err)
-	} else {
-		db.InstanceSet("gorm:table_options", "ENGINE=InnoDB")
-		sqlDB, _ := db.DB()
-		sqlDB.SetMaxIdleConns(mysqlConf.MaxIdleConns)
-		sqlDB.SetMaxOpenConns(mysqlConf.MaxOpenConns)
-		zlog.Logger.Info("mysql connected")
-		return db
 	}
+	db.InstanceSet("gorm:table_options", "ENGINE=InnoDB")
+	sqlDB, _ := db.DB()
+	sqlDB.SetMaxIdleConns(mysqlConf.MaxIdleConns)
+	sqlDB.SetMaxOpenConns(mysqlConf.MaxOpenConns)
+	zlog.Logger.Info("mysql connected")
+	return db
 }
 
 func getGormConfig() *gorm.Config {
@@ -71,7 +70,7 @@ func getGormConfig() *gorm.Config {
 
 func RegisterTables(db *gorm.DB) {
 	err := db.AutoMigrate(
-		obj.CsUser{},
+		model.CsUser{},
 	)
 	if err != nil {
 		zlog.Logger.Error("register table failed", zap.Error(err))

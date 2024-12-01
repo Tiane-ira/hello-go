@@ -2,7 +2,7 @@ package app
 
 import (
 	"fmt"
-	"hello-go/global/core/code"
+	"hello-go/core/code"
 	"reflect"
 	"time"
 
@@ -34,6 +34,16 @@ func BindJson(path string, handler interface{}) (string, gin.HandlerFunc) {
 func BindQuery(path string, handler interface{}) (string, gin.HandlerFunc) {
 	return bindGinHandler(path, handler, func(c *gin.Context, req interface{}) error {
 		return c.BindQuery(req)
+	})
+}
+
+func BindUriAndQuery(path string, handler interface{}) (string, gin.HandlerFunc) {
+	return bindGinHandler(path, handler, func(c *gin.Context, req interface{}) error {
+		err := c.BindQuery(req)
+		if err != nil {
+			return err
+		}
+		return c.BindUri(req)
 	})
 }
 

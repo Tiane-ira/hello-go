@@ -1,7 +1,7 @@
 package app
 
 import (
-	"hello-go/global/core/code"
+	"hello-go/core/code"
 	"net/http"
 	"sync/atomic"
 )
@@ -44,7 +44,7 @@ func (a *AppGin) ErrResp(code code.AppCode) {
 	resp := RespBase{
 		Code:   code.Code,
 		Msg:    code.Msg,
-		Data:   struct{}{},
+		Data:   nil,
 		Trace:  a.trace,
 		Detail: code.Error(),
 	}
