@@ -8,6 +8,7 @@ import (
 	"hello-go/core/db"
 	"hello-go/repository"
 	"hello-go/service"
+	"hello-go/utils/redis"
 	"hello-go/zlog"
 
 	"go.uber.org/fx"
@@ -21,6 +22,7 @@ func main() {
 	)
 
 	app := fx.New(
+		fx.Invoke(db.RegisterTables, redis.InitRedis),
 		fx.Provide(app.NewGin, db.NewMysqlDb),
 		fx.Provide(service.NewUserService),
 		fx.Provide(repository.NewUserRepository),

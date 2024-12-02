@@ -36,6 +36,8 @@ func parseSort(sort string) (itemList []SortItem) {
 	return itemList
 }
 
+// Sort sql排序处理
+// sort: "id,-name" "id asc, name desc"
 func Sort(tx *gorm.DB, sort string) {
 	sortList := parseSort(sort)
 	for _, item := range sortList {

@@ -1,10 +1,15 @@
 package service
 
 import (
+	"fmt"
 	"hello-go/core/db/paginator"
 	"hello-go/domain"
 	"hello-go/model"
 	"hello-go/repository"
+	"hello-go/utils/redis"
+	"hello-go/zlog"
+
+	"go.uber.org/zap"
 )
 
 type UserService struct {
@@ -26,7 +31,20 @@ func (u *UserService) PageList(req *domain.ListUserPageReq) (pageData paginator.
 }
 
 func (u *UserService) GetById(id uint) (user model.CsUser, err error) {
-	return u.userRepo.GetById(id)
+	err = redis.GetObj(fmt.Sprintf("user::%d", id), &user)
+	if err != nil {
+		zlog.Logger.Error("get user from redis failed", zap.Error(err))
+	}
+	if user.ID != 0 {
+		zlog.Logger.Info("get user from redis success")
+		return
+	}
+	user, err = u.userRepo.GetById(id)
+	if err != nil {
+		return
+	}
+	err = redis.Set(fmt.Sprintf("user::%d", id), &user)
+	return
 }
 
 func (u *UserService) Remove(id uint) (err error) {

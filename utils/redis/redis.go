@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"hello-go/configs"
 	"hello-go/zlog"
@@ -37,14 +38,18 @@ func InitRedis() {
 	}
 }
 
-func init() {
-	if client == nil {
-		InitRedis()
-	}
-}
-
 func Get(key string) (value string, err error) {
 	return client.Get(context.Background(), key).Result()
+}
+
+func GetObj(key string, obj interface{}) (err error) {
+	var data []byte
+	data, err = client.Get(context.Background(), key).Bytes()
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(data, obj)
+	return
 }
 
 func Set(key string, value any) (err error) {
