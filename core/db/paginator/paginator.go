@@ -4,7 +4,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// 分页结构体
+// Page 分页结构体
 type Page[T any] struct {
 	NoPage      bool  `json:"-"`
 	CurrentPage int64 `json:"page"`
@@ -16,7 +16,7 @@ type Page[T any] struct {
 
 func (page *Page[T]) WithNoPage(no bool) { page.NoPage = no }
 
-// 各种查询条件先在query设置好后再放进来
+// SelectPages 各种查询条件先在query设置好后再放进来
 func (page *Page[T]) SelectPages(query *gorm.DB) (e error) {
 	var model T
 	if page.NoPage {

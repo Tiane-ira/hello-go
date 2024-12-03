@@ -1,6 +1,7 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"hello-go/core/code"
 	"reflect"
@@ -9,15 +10,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AppGin struct {
+type AGin struct {
 	C         *gin.Context
 	respCount int32
 	trace     int64
 }
 
-func NewAppGin(c *gin.Context) *AppGin {
+func NewAppGin(c *gin.Context) *AGin {
 	now := time.Now()
-	return &AppGin{
+	return &AGin{
 		C:     c,
 		trace: now.UnixNano(),
 	}
@@ -59,8 +60,8 @@ func bindGinHandler(path string, handler interface{}, f bindFun) (string, gin.Ha
 		panic("handler must return only one error")
 	}
 
-	if hType.In(0) != reflect.TypeOf(&AppGin{}) {
-		panic("handler first param must be *AppGin")
+	if hType.In(0) != reflect.TypeOf(&AGin{}) {
+		panic("handler first param must be *AGin")
 	}
 	reqType := hType.In(1)
 	if reqType.Kind() != reflect.Ptr && reqType.Kind() != reflect.Struct {
@@ -83,7 +84,7 @@ func newGinHandler(handler interface{}, reqType reflect.Type, f bindFun) gin.Han
 		}
 		err := f(c, reqVal.Interface())
 		if err != nil {
-			a.ErrResp(code.PARAM_INVALID)
+			a.ErrResp(code.ParamInvalid)
 			return
 		}
 		// 调用handler
@@ -96,7 +97,7 @@ func newGinHandler(handler interface{}, reqType reflect.Type, f bindFun) gin.Han
 
 		// 方法中断异常响应
 		if len(results) == 0 {
-			a.ErrResp(code.SERVER_ERR)
+			a.ErrResp(code.ServerErr)
 			return
 		}
 		// 无数据成功响应
@@ -107,12 +108,13 @@ func newGinHandler(handler interface{}, reqType reflect.Type, f bindFun) gin.Han
 
 		// 内部错误响应
 		err = results[0].Interface().(error)
-		val, ok := err.(code.AppCode)
+		var val code.AppCode
+		ok := errors.As(err, &val)
 		if ok {
 			a.ErrResp(val)
 			return
 		}
 		// 非内部错误响应
-		a.ErrResp(code.AppCode{Code: code.UNKONW_ERR.Code, Msg: fmt.Sprintf(code.UNKONW_ERR.Msg, err.Error())})
+		a.ErrResp(code.AppCode{Code: code.UnknownErr.Code, Msg: fmt.Sprintf(code.UnknownErr.Msg, err.Error())})
 	}
 }

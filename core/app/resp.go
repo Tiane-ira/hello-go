@@ -14,12 +14,12 @@ type RespBase struct {
 	Detail string      `json:"detail"`
 }
 
-func (a *AppGin) R(data interface{}) error {
+func (a *AGin) R(data interface{}) error {
 	a.SuccResp(data)
 	return nil
 }
 
-func (a *AppGin) SuccResp(data interface{}) {
+func (a *AGin) SuccResp(data interface{}) {
 	// 确保只调用一次响应逻辑
 	if a.C == nil || !atomic.CompareAndSwapInt32(&a.respCount, 0, 1) {
 		return
@@ -33,11 +33,11 @@ func (a *AppGin) SuccResp(data interface{}) {
 	a.jsonResp(resp)
 }
 
-func (a *AppGin) jsonResp(resp RespBase) {
+func (a *AGin) jsonResp(resp RespBase) {
 	a.C.JSON(http.StatusOK, resp)
 }
 
-func (a *AppGin) ErrResp(code code.AppCode) {
+func (a *AGin) ErrResp(code code.AppCode) {
 	if a.C == nil || !atomic.CompareAndSwapInt32(&a.respCount, 0, 1) {
 		return
 	}

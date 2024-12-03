@@ -14,7 +14,7 @@ import (
 var Logger *zap.Logger
 
 const (
-	defauleLevel      = zap.DebugLevel
+	defaultLevel      = zap.DebugLevel
 	defaultTimeLayout = "2006-01-02 15:04:05"
 )
 
@@ -111,7 +111,7 @@ func WithDisableConsole() Option {
 
 func InitJsonZap(opts ...Option) {
 	opt := &option{
-		level:      defauleLevel,
+		level:      defaultLevel,
 		fields:     make(map[string]string),
 		timeLayout: defaultTimeLayout,
 	}

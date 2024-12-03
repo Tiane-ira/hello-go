@@ -18,9 +18,9 @@ func parseSort(sort string) (itemList []SortItem) {
 		return
 	}
 	sortList := strings.Split(sort, ",")
-	for _, srotStr := range sortList {
-		sortStr := strings.TrimSpace(srotStr)
-		if srotStr == "" {
+	for _, sStr := range sortList {
+		sortStr := strings.TrimSpace(sStr)
+		if sStr == "" {
 			continue
 		}
 		sortItem := SortItem{}

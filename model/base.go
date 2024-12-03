@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// 基础模型，每张表都有的字段
+// ObjBase 基础模型，每张表都有的字段
 type ObjBase struct {
 	ID        uint           `gorm:"primarykey" json:"id"`            // 主键ID
 	CreatedAt *app.DateTime  `json:"createdAt" grom:"autoCreateTime"` // 创建时间

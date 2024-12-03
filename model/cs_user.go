@@ -8,7 +8,7 @@ type CsUser struct {
 	Age  int    `json:"age"`
 }
 
-func (c CsUser) TableName() string { return "cs_user" }
+func (c *CsUser) TableName() string { return "cs_user" }
 
 func (c *CsUser) MarshalBinary() ([]byte, error) {
 	return json.Marshal(c)
