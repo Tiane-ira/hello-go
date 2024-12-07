@@ -14,11 +14,7 @@ import (
 )
 
 func StartServer(lc fx.Lifecycle, mux *http.ServeMux) {
-	host := configs.Get().App.Host
-	if host == "" {
-		host = "127.0.0.1"
-	}
-	addr := fmt.Sprintf("%s:%d", host, configs.Get().App.Port)
+	addr := fmt.Sprintf(":%d", configs.Get().App.Port)
 	server := &http.Server{
 		Addr:           addr,
 		Handler:        mux,
